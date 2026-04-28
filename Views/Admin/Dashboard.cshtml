@@ -1,6 +1,8 @@
+@model IEnumerable<CAFE_DELIGHT.Models.Product>
 @{
     ViewData["Title"] = "Admin Dashboard";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var recentOrders = ViewBag.RecentOrders as IEnumerable<CAFE_DELIGHT.Models.Order>;
 }
 
 @section Styles {
@@ -182,62 +184,26 @@
             <div class="cd-admin-stat-card">
                 <div class="cd-admin-stat-icon">₹</div>
                 <div class="cd-admin-stat-title">Total Revenue</div>
-                <div class="cd-admin-stat-value" id="totalRevenue">₹1,780</div>
-           
+                <div class="cd-admin-stat-value" id="totalRevenue">₹@ViewBag.TotalRevenue.ToString("N0")</div>
             </div>
             <div class="cd-admin-stat-card">
                 <div class="cd-admin-stat-icon">🛒</div>
                 <div class="cd-admin-stat-title">Total Orders</div>
-                <div class="cd-admin-stat-value" id="totalOrders">4</div>
-              
+                <div class="cd-admin-stat-value" id="totalOrders">@ViewBag.OrderCount</div>
             </div>
             <div class="cd-admin-stat-card">
                 <div class="cd-admin-stat-icon">📦</div>
                 <div class="cd-admin-stat-title">Total Products</div>
-                <div class="cd-admin-stat-value" id="totalProducts">0</div>
+                <div class="cd-admin-stat-value" id="totalProducts">@ViewBag.ProductCount</div>
                 <div class="cd-admin-stat-subtitle" style="color: #888; font-weight: normal;">Live count</div>
             </div>
             <div class="cd-admin-stat-card">
                 <div class="cd-admin-stat-icon">👥</div>
                 <div class="cd-admin-stat-title">Total Users</div>
-                <div class="cd-admin-stat-value" id="totalUsers">0</div>
-              
+                <div class="cd-admin-stat-value" id="totalUsers">@ViewBag.UserCount</div>
             </div>
         </div>
 
-        <script>
-            (function () {
-                // Products
-                var rawProducts = window.localStorage ? window.localStorage.getItem('cd_products_v1') : null;
-                var products = rawProducts ? JSON.parse(rawProducts) : [];
-                var activeProducts = Array.isArray(products) ? products.filter(function(p) { return !p.deleted; }).length : 5;
-                var totalProductsEl = document.getElementById('totalProducts');
-                if (totalProductsEl) totalProductsEl.textContent = activeProducts;
-
-                // Users
-                var rawUsers = window.localStorage ? window.localStorage.getItem('cd_admin_users_v1') : null;
-                var users = rawUsers ? JSON.parse(rawUsers) : [];
-                var activeUsers = Array.isArray(users) ? users.filter(function(u) { return !u.deleted; }).length : 3;
-                var totalUsersEl = document.getElementById('totalUsers');
-                if (totalUsersEl) totalUsersEl.textContent = activeUsers;
-
-                // Orders — read from localStorage
-                var rawOrders = window.localStorage ? window.localStorage.getItem('cd_orders_v1') : null;
-                var orders = (rawOrders ? JSON.parse(rawOrders) : null) || [];
-                if (!Array.isArray(orders)) orders = [];
-
-                var totalOrdersEl = document.getElementById('totalOrders');
-                if (totalOrdersEl) totalOrdersEl.textContent = orders.length;
-
-                // Revenue — sum numeric part of total field
-                var revenue = orders.reduce(function(sum, o) {
-                    var num = parseFloat((o.total || '').toString().replace(/[^\d.]/g, '')) || 0;
-                    return sum + num;
-                }, 0);
-                var totalRevenueEl = document.getElementById('totalRevenue');
-                if (totalRevenueEl) totalRevenueEl.textContent = '\u20b9' + Math.round(revenue).toLocaleString('en-IN');
-            })();
-        </script>
 
         <h3 class="cd-admin-recent-orders-title">Recent Orders</h3>
         <div class="cd-admin-table-card">
@@ -248,120 +214,53 @@
                 <span>Status</span>
             </div>
             <div id="dashRecentOrdersBody" style="min-width:600px;overflow-x:auto;">
-                <!-- Rendered by JS -->
+                @if (recentOrders != null && recentOrders.Any())
+                {
+                    @foreach (var order in recentOrders)
+                    {
+                        <div style="display:grid;grid-template-columns:2fr 3fr 1fr 1fr;padding:0.7rem 1.3rem;font-size:0.85rem;column-gap:1rem;align-items:center;border-bottom:1px solid #f7ece0;">
+                            <div>
+                                <div style="font-weight:600;color:#3b2418;">#@order.OrderId</div>
+                                <div style="font-size:0.75rem;color:#9e8a78;margin-top:2px;">@order.User?.FullName</div>
+                            </div>
+                            <div style="color:#555;font-size:0.82rem;">@(order.OrderItems?.Count ?? 0) Items</div>
+                            <div style="font-weight:600;">₹@order.TotalAmount</div>
+                            <div>
+                                <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600; @(order.Status == "Completed" ? "background:#e6f4ea;color:#1e8e3e;" : "background:#fff3e0;color:#e65100;")">@order.Status</span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div style="padding:1.5rem;text-align:center;color:#b89880;font-size:0.9rem;">No orders yet.</div>
+                }
             </div>
         </div>
 
-        <script>
-            (function () {
-                var rawOrders = window.localStorage ? window.localStorage.getItem('cd_orders_v1') : null;
-                var orders = rawOrders ? JSON.parse(rawOrders) : [];
-                if (!Array.isArray(orders)) orders = [];
-
-                var body = document.getElementById('dashRecentOrdersBody');
-                if (!body) return;
-
-                var recent = orders.slice(-5).reverse(); // last 5, newest first
-                if (recent.length === 0) {
-                    body.innerHTML = '<div style="padding:1.5rem;text-align:center;color:#b89880;font-size:0.9rem;">No orders yet.</div>';
-                    return;
-                }
-
-                recent.forEach(function (o, i) {
-                    var isCompleted = (o.status || '').toLowerCase() === 'completed';
-                    var stStyle = isCompleted
-                        ? 'background:#e6f4ea;color:#1e8e3e;'
-                        : 'background:#fff3e0;color:#e65100;';
-                    var borderBottom = i < recent.length - 1 ? 'border-bottom:1px solid #f7ece0;' : '';
-                    var row = document.createElement('div');
-                    row.style.cssText = 'display:grid;grid-template-columns:2fr 3fr 1fr 1fr;padding:0.7rem 1.3rem;font-size:0.85rem;column-gap:1rem;align-items:center;' + borderBottom;
-                    row.innerHTML =
-                        '<div>' +
-                            '<div style="font-weight:600;color:#3b2418;">' + (o.id || '') + '</div>' +
-                            '<div style="font-size:0.75rem;color:#9e8a78;margin-top:2px;">' + (o.customer || '') + '</div>' +
-                        '</div>' +
-                        '<div style="color:#555;font-size:0.82rem;">' + (o.items || '') + '</div>' +
-                        '<div style="font-weight:600;">' + (o.total || '') + '</div>' +
-                        '<div><span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;' + stStyle + '">' + (o.status || '') + '</span></div>';
-                    body.appendChild(row);
-                });
-            })();
-        </script>
 
         <h3 class="cd-admin-recent-orders-title" style="margin-top:10px;">Menu Items</h3>
         <div class="cd-dash-menu-grid" id="dashMenuGrid">
-            <!-- Rendered by JS -->
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var product in Model)
+                {
+                    <div class="cd-dash-menu-card">
+                        <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=800" : product.ImageUrl)" alt="@product.ProductName" />
+                        <div class="cd-dash-menu-card-body">
+                            <h4>@product.ProductName <span class="cd-dash-price">₹@product.Price</span></h4>
+                            <p>@product.Category?.CategoryName</p>
+                            <span class="cd-dash-category">@product.Category?.CategoryName</span>
+                            <span class="cd-dash-status-badge @(product.Status == "Active" ? "cd-dash-status-active" : "cd-dash-status-out")">@product.Status</span>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="padding:1.5rem;text-align:center;color:#b89880;font-size:0.9rem;grid-column:1/-1;">No menu items yet.</div>
+            }
         </div>
 
-        <script>
-            (function () {
-                var STORAGE_KEY = 'cd_products_v1';
-                var DEFAULT_IMAGE = 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=800';
-
-                function loadProducts() {
-                    try {
-                        var raw = window.localStorage ? window.localStorage.getItem(STORAGE_KEY) : null;
-                        if (!raw) return [];
-                        var parsed = JSON.parse(raw);
-                        return Array.isArray(parsed) ? parsed : [];
-                    } catch (e) {
-                        return [];
-                    }
-                }
-
-                var products = loadProducts();
-
-                if (!products || products.length === 0) {
-                    products = [
-                        { id: "1", name: "Cappuccino", category: "Hot Coffee", price: "180.00", status: "Active", deleted: false, image: "https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=800" },
-                        { id: "2", name: "Butter Croissant", category: "Bakery", price: "120.00", status: "Active", deleted: false, image: "https://images.pexels.com/photos/1860209/pexels-photo-1860209.jpeg?auto=compress&cs=tinysrgb&w=800" },
-                        { id: "3", name: "Iced Mocha", category: "Cold Coffee", price: "240.00", status: "Active", deleted: false, image: "https://images.pexels.com/photos/4109744/pexels-photo-4109744.jpeg?auto=compress&cs=tinysrgb&w=800" },
-                        { id: "4", name: "Chocolate Muffin", category: "Bakery", price: "170.00", status: "Active", deleted: false, image: "https://images.pexels.com/photos/6930269/pexels-photo-6930269.jpeg?auto=compress&cs=tinysrgb&w=800" },
-                        { id: "5", name: "Double Espresso", category: "Hot Coffee", price: "140.00", status: "Active", deleted: false, image: "https://images.pexels.com/photos/2396220/pexels-photo-2396220.jpeg?auto=compress&cs=tinysrgb&w=800" }
-                    ];
-                    try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(products)); } catch(e){}
-                }
-
-                var grid = document.getElementById('dashMenuGrid');
-                if (!grid) return;
-
-                var activeProducts = products.filter(function(p) { return p && !p.deleted; });
-
-                if (activeProducts.length === 0) {
-                    grid.innerHTML = '<div style="padding:1.5rem;text-align:center;color:#b89880;font-size:0.9rem;grid-column:1/-1;">No menu items yet.</div>';
-                    return;
-                }
-
-                activeProducts.forEach(function (product) {
-                    if (!product.name) return;
-                    var name = product.name;
-                    var price = product.price || '0';
-                    var image = product.image || DEFAULT_IMAGE;
-                    var category = product.category || '';
-                    var status = (product.status || 'Active').toString();
-                    var isOut = status.toLowerCase() === 'out of stock' || status.toLowerCase() === 'out';
-
-                    var card = document.createElement('div');
-                    card.className = 'cd-dash-menu-card';
-                    card.innerHTML =
-                        '<img src="' + image + '" alt="' + name.replace(/"/g, '&quot;') + '" />' +
-                        '<div class="cd-dash-menu-card-body">' +
-                        '  <h4>' + name.replace(/</g, '&lt;').replace(/>/g, '&gt;') + ' <span class="cd-dash-price">₹' + price + '</span></h4>' +
-                        '  <p>' + (category || '') + '</p>' +
-                        '  <span class="cd-dash-category">' + (category || 'General') + '</span>' +
-                        '  <span class="cd-dash-status-badge ' + (isOut ? 'cd-dash-status-out' : 'cd-dash-status-active') + '">' + (isOut ? 'Out of Stock' : 'Active') + '</span>' +
-                        '</div>';
-
-                    var img = card.querySelector('img');
-                    if (img) {
-                        img.addEventListener('error', function () {
-                            img.src = DEFAULT_IMAGE;
-                        }, { once: true });
-                    }
-
-                    grid.appendChild(card);
-                });
-            })();
-        </script>
     </section>
 </div>

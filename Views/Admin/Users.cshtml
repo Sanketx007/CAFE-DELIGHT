@@ -1,3 +1,4 @@
+@model IEnumerable<CAFE_DELIGHT.Models.User>
 @{
     ViewData["Title"] = "Manage Users";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -70,12 +71,42 @@
                 <span>Avatar</span>
                 <span>Name</span>
                 <span>Email</span>
+                <span>Last Login</span>
                 <span>Status</span>
                 <span class="cd-admin-table-actions-col">Actions</span>
             </div>
 
             <div id="usersTableBody">
-                <!-- rows rendered by JS -->
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var user in Model)
+                    {
+                        <div class="cd-admin-user-table-row" data-user-id="@user.UserId">
+                            <div class="cd-admin-user-avatar-circle">
+                                @(string.IsNullOrEmpty(user.FullName) ? "U" : string.Join("", user.FullName.Split(' ').Select(s => s[0]).Take(2)).ToUpper())
+                            </div>
+                            <div style="font-weight:600;color:#3b2418;">@user.FullName</div>
+                            <div style="color:#5b4636;">@user.Email</div>
+                            <div style="color:#888; font-size: 0.75rem;">
+                                @(user.LastLogin.HasValue ? user.LastLogin.Value.ToString("g") : "Never")
+                            </div>
+                            <div>
+                                <span class="cd-admin-status-pill @(user.Status == "Active" ? "is-active" : "is-blocked")">
+                                    @(user.Status ?? "Active")
+                                </span>
+                            </div>
+                            <div class="cd-admin-table-actions">
+                                <form asp-action="DeleteUser" asp-route-id="@user.UserId" method="post" style="display:inline;" onsubmit="return confirm('Delete user @user.FullName?')">
+                                    <button type="submit" class="cd-admin-icon-btn" title="Delete">🗑</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div style="padding:1.5rem;text-align:center;color:#b89880;font-size:0.9rem;">No users found.</div>
+                }
             </div>
         </div>
     </section>
@@ -86,7 +117,7 @@
 <style>
     .cd-admin-user-table-header-row {
         display: grid;
-        grid-template-columns: 0.8fr 1.3fr 1.8fr 1fr 0.7fr;
+        grid-template-columns: 0.8fr 1.3fr 1.8fr 1.2fr 1fr 0.7fr;
         padding: 0.55rem 1.3rem;
         font-size: 0.8rem;
         font-weight: 600;
@@ -98,7 +129,7 @@
 
     .cd-admin-user-table-row {
         display: grid;
-        grid-template-columns: 0.8fr 1.3fr 1.8fr 1fr 0.7fr;
+        grid-template-columns: 0.8fr 1.3fr 1.8fr 1.2fr 1fr 0.7fr;
         padding: 0.75rem 1.3rem;
         font-size: 0.8rem;
         column-gap: 1rem;
@@ -182,20 +213,18 @@
 
 <script>
     (function () {
-        var STORAGE_KEY = 'cd_admin_users_v1';
-
-        function loadUsers() {
-            try {
-                var raw = window.localStorage ? window.localStorage.getItem(STORAGE_KEY) : null;
-                if (!raw) return [];
-                var parsed = JSON.parse(raw);
-                return Array.isArray(parsed) ? parsed : [];
-            } catch (e) {
-                return [];
-            }
+        var searchInput = document.getElementById('userSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                var q = (searchInput.value || '').trim().toLowerCase();
+                document.querySelectorAll('.cd-admin-user-table-row').forEach(row => {
+                    var text = row.textContent.toLowerCase();
+                    row.style.display = text.indexOf(q) !== -1 ? 'grid' : 'none';
+                });
+            });
         }
-
-        function saveUsers(users) {
+    })();
+</script>
             try {
                 window.localStorage.setItem(STORAGE_KEY, JSON.stringify(users || []));
             } catch (e) {

@@ -1,4 +1,4 @@
-.
+@model IEnumerable<CAFE_DELIGHT.Models.User>
 @{
     ViewData["Title"] = "Login";
 }
@@ -13,7 +13,7 @@
             <input class="cd-input" type="email" id="Email" name="email" />
             <div class="cd-error-text" id="EmailError"></div>
         </div>
-
+            
         <div class="cd-form-group">
             <label for="Password">Password</label>
             <input class="cd-input" type="password" id="Password" name="password" />
@@ -84,6 +84,39 @@
                 &copy; @DateTime.Now.Year Cafe Delight. All rights reserved.
             </p>
         </div>
+    </div>
+</div>
+
+<div class="cd-debug-user-section">
+    <h3 class="cd-debug-title">Registered Users (Database)</h3>
+    <p class="cd-debug-subtitle">Use these credentials to test the login functionality.</p>
+    <div class="cd-table-container">
+        <table class="cd-debug-table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.Email</td>
+                            <td><code>@user.PasswordHash</code></td>
+                            <td><span class="cd-role-badge">@(user.Role?.RoleName ?? "Customer")</span></td>
+                            <td>
+                                <button type="button" class="cd-copy-btn" onclick="fillLoginForm('@user.Email', '@user.PasswordHash')">Use</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -266,6 +299,80 @@
             transform: translateY(0) scale(1);
         }
     }
+    .cd-debug-user-section {
+        margin-top: 3rem;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cd-debug-title {
+        color: #3b2418;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .cd-debug-subtitle {
+        color: #7b6a5f;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .cd-table-container {
+        overflow-x: auto;
+    }
+
+    .cd-debug-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    .cd-debug-table th, .cd-debug-table td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid #f0edea;
+    }
+
+    .cd-debug-table th {
+        color: #5d3a26;
+        font-weight: 600;
+    }
+
+    .cd-role-badge {
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        background: #f0edea;
+        color: #5d3a26;
+    }
+
+    .cd-copy-btn {
+        padding: 0.3rem 0.8rem;
+        background: #8b4c25;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: background 0.2s;
+    }
+
+    .cd-copy-btn:hover {
+        background: #7a4320;
+    }
+
+    code {
+        font-family: monospace;
+        background: #f8f8f8;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        color: #e83e8c;
+    }
 </style>
 
 <script>
@@ -324,4 +431,11 @@
             }
         });
     })();
+
+    function fillLoginForm(email, password) {
+        document.getElementById('Email').value = email;
+        document.getElementById('Password').value = password;
+        // Optionally scroll to form
+        document.getElementById('loginForm').scrollIntoView({ behavior: 'smooth' });
+    }
 </script>

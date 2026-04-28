@@ -1,3 +1,4 @@
+@model IEnumerable<CAFE_DELIGHT.Models.Product>
 @{
     ViewData["Title"] = "Admin Panel";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -74,95 +75,31 @@
                 <span class="cd-admin-table-actions-col">Actions</span>
             </div>
 
-            <div class="cd-admin-table-row cd-admin-product-row" data-product-id="1" data-product-name="Cappuccino" data-product-meta="Hot Coffee" data-product-price="180.00" data-product-status="Active">
-                <div class="cd-admin-product-cell">
-                    <div class="cd-admin-product-thumb"></div>
-                    <div>
-                        <div class="cd-admin-product-name">Cappuccino</div>
-                        <div class="cd-admin-product-meta">Hot Coffee</div>
+            @foreach (var item in Model)
+            {
+                <div class="cd-admin-table-row cd-admin-product-row" 
+                     data-product-id="@item.ProductId" 
+                     data-product-name="@item.ProductName" 
+                     data-product-meta="@item.Category?.CategoryName" 
+                     data-product-price="@item.Price" 
+                     data-product-status="@item.Status">
+                    <div class="cd-admin-product-cell">
+                        <div class="cd-admin-product-thumb" style="background-image: url('@(string.IsNullOrEmpty(item.ImageUrl) ? "" : item.ImageUrl)'); background-size: cover;"></div>
+                        <div>
+                            <div class="cd-admin-product-name">@item.ProductName</div>
+                            <div class="cd-admin-product-meta">@item.Category?.CategoryName</div>
+                        </div>
+                    </div>
+                    <div class="cd-admin-table-text">₹@item.Price</div>
+                    <div class="cd-admin-table-text">
+                        <span class="cd-admin-status-pill @(item.Status == "Active" ? "is-active" : "is-out")">@item.Status</span>
+                    </div>
+                    <div class="cd-admin-table-actions">
+                        <button type="button" class="cd-admin-icon-btn cd-admin-edit-product-btn" title="Edit">✏️</button>
+                        <button type="button" class="cd-admin-icon-btn cd-admin-delete-product-btn" title="Delete">🗑</button>
                     </div>
                 </div>
-                <div class="cd-admin-table-text">₹180.00</div>
-                <div class="cd-admin-table-text">
-                    <span class="cd-admin-status-pill is-active">Active</span>
-                </div>
-                <div class="cd-admin-table-actions">
-                    <button type="button" class="cd-admin-icon-btn cd-admin-edit-product-btn" title="Edit">✏️</button>
-                    <button type="button" class="cd-admin-icon-btn cd-admin-delete-product-btn" title="Delete">🗑</button>
-                </div>
-            </div>
-
-            <div class="cd-admin-table-row cd-admin-product-row" data-product-id="2" data-product-name="Butter Croissant" data-product-meta="Bakery" data-product-price="120.00" data-product-status="Active">
-                <div class="cd-admin-product-cell">
-                    <div class="cd-admin-product-thumb"></div>
-                    <div>
-                        <div class="cd-admin-product-name">Butter Croissant</div>
-                        <div class="cd-admin-product-meta">Bakery</div>
-                    </div>
-                </div>
-                <div class="cd-admin-table-text">₹120.00</div>
-                <div class="cd-admin-table-text">
-                    <span class="cd-admin-status-pill is-active">Active</span>
-                </div>
-                <div class="cd-admin-table-actions">
-                    <button type="button" class="cd-admin-icon-btn cd-admin-edit-product-btn" title="Edit">✏️</button>
-                    <button type="button" class="cd-admin-icon-btn cd-admin-delete-product-btn" title="Delete">🗑</button>
-                </div>
-            </div>
-
-            <div class="cd-admin-table-row cd-admin-product-row" data-product-id="3" data-product-name="Iced Mocha" data-product-meta="Cold Coffee" data-product-price="240.00" data-product-status="Active">
-                <div class="cd-admin-product-cell">
-                    <div class="cd-admin-product-thumb"></div>
-                    <div>
-                        <div class="cd-admin-product-name">Iced Mocha</div>
-                        <div class="cd-admin-product-meta">Cold Coffee</div>
-                    </div>
-                </div>
-                <div class="cd-admin-table-text">₹240.00</div>
-                <div class="cd-admin-table-text">
-                    <span class="cd-admin-status-pill is-active">Active</span>
-                </div>
-                <div class="cd-admin-table-actions">
-                    <button type="button" class="cd-admin-icon-btn cd-admin-edit-product-btn" title="Edit">✏️</button>
-                    <button type="button" class="cd-admin-icon-btn cd-admin-delete-product-btn" title="Delete">🗑</button>
-                </div>
-            </div>
-
-            <div class="cd-admin-table-row cd-admin-product-row" data-product-id="4" data-product-name="Chocolate Muffin" data-product-meta="Bakery" data-product-price="170.00" data-product-status="Active">
-                <div class="cd-admin-product-cell">
-                    <div class="cd-admin-product-thumb"></div>
-                    <div>
-                        <div class="cd-admin-product-name">Chocolate Muffin</div>
-                        <div class="cd-admin-product-meta">Bakery</div>
-                    </div>
-                </div>
-                <div class="cd-admin-table-text">₹250.00</div>
-                <div class="cd-admin-table-text">
-                    <span class="cd-admin-status-pill is-active">Active</span>
-                </div>
-                <div class="cd-admin-table-actions">
-                    <button type="button" class="cd-admin-icon-btn cd-admin-edit-product-btn" title="Edit">✏️</button>
-                    <button type="button" class="cd-admin-icon-btn cd-admin-delete-product-btn" title="Delete">🗑</button>
-                </div>
-            </div>
-
-            <div class="cd-admin-table-row cd-admin-product-row" data-product-id="5" data-product-name="Double Espresso" data-product-meta="Hot Coffee" data-product-price="140.00" data-product-status="Active">
-                <div class="cd-admin-product-cell">
-                    <div class="cd-admin-product-thumb"></div>
-                    <div>
-                        <div class="cd-admin-product-name">Double Espresso</div>
-                        <div class="cd-admin-product-meta">Hot Coffee</div>
-                    </div>
-                </div>
-                <div class="cd-admin-table-text">₹140.00</div>
-                <div class="cd-admin-table-text">
-                    <span class="cd-admin-status-pill is-active">Active</span>
-                </div>
-                <div class="cd-admin-table-actions">
-                    <button type="button" class="cd-admin-icon-btn cd-admin-edit-product-btn" title="Edit">✏️</button>
-                    <button type="button" class="cd-admin-icon-btn cd-admin-delete-product-btn" title="Delete">🗑</button>
-                </div>
-            </div>
+            }
         </div>
     </section>
 </div>
@@ -349,168 +286,20 @@
             });
         }
 
-        var activeRow = null;
-
-        // Keep admin edits in localStorage so they can show on Home/Menu pages (UI only).
-        var STORAGE_KEY = 'cd_products_v1';
-        var productsCache = [];
-
-        function loadProducts() {
-            try {
-                var raw = window.localStorage ? window.localStorage.getItem(STORAGE_KEY) : null;
-                if (!raw) return [];
-                var parsed = JSON.parse(raw);
-                return Array.isArray(parsed) ? parsed : [];
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function saveProducts(products) {
-            try {
-                window.localStorage.setItem(STORAGE_KEY, JSON.stringify(products || []));
-            } catch (e) {
-                // Ignore localStorage failures.
-            }
-        }
-
-        function seedProductsFromDom() {
-            var seeded = [];
-            var rows = document.querySelectorAll('.cd-admin-product-row');
-
-            rows.forEach(function (row) {
-                seeded.push({
-                    id: row.dataset.productId || '',
-                    name: row.dataset.productName || '',
-                    category: row.dataset.productMeta || '',
-                    price: row.dataset.productPrice || '',
-                    status: row.dataset.productStatus || '',
-                    deleted: false
-                });
-            });
-
-            return seeded;
-        }
-
-        function findProductByRow(row) {
-            if (!row) return null;
-            var id = row.dataset.productId;
-            var name = row.dataset.productName;
-            return productsCache.find(function (p) {
-                return (id && p.id && p.id === id) || (name && p.name === name);
-            }) || null;
-        }
-
-        (function initAdminStorage() {
-            productsCache = loadProducts();
-
-            // Seed only admin-table products (so Home/Menu items not in admin list stay unchanged).
-            if (!productsCache || productsCache.length === 0) {
-                productsCache = seedProductsFromDom();
-                saveProducts(productsCache);
-            } else {
-                // Ensure every admin-table product exists in the cache.
-                var seeded = seedProductsFromDom();
-                seeded.forEach(function (s) {
-                    var exists = productsCache.find(function (p) {
-                        return (s.id && p.id && p.id === s.id) || (s.name && p.name === s.name);
-                    });
-                    if (!exists) {
-                        productsCache.push(s);
-                    } else {
-                        // Keep the deleted flag, but refresh the latest table values.
-                        var deleted = !!exists.deleted;
-                        exists.id = s.id;
-                        exists.name = s.name;
-                        exists.category = s.category;
-                        exists.price = s.price;
-                        exists.status = s.status;
-                        exists.deleted = deleted;
-                    }
-                });
-                saveProducts(productsCache);
-            }
-
-            // Hide rows that are marked deleted.
-            var allRows = document.querySelectorAll('.cd-admin-product-row');
-            allRows.forEach(function (row) {
-                var prod = findProductByRow(row);
-                if (prod && prod.deleted) {
-                    if (row.parentElement) row.parentElement.removeChild(row);
-                } else if (prod) {
-                    // Apply cached values back to the row so refresh keeps edits.
-                    if (prod.name) row.dataset.productName = prod.name;
-                    if (prod.category !== undefined) row.dataset.productMeta = prod.category;
-                    if (prod.price !== undefined) row.dataset.productPrice = prod.price;
-                    if (prod.status) row.dataset.productStatus = prod.status;
-
-                    var nameEl = row.querySelector('.cd-admin-product-name');
-                    if (nameEl && prod.name) nameEl.textContent = prod.name;
-
-                    var metaEl = row.querySelector('.cd-admin-product-meta');
-                    if (metaEl && prod.category !== undefined) metaEl.textContent = prod.category;
-
-                    var textEls = row.querySelectorAll('.cd-admin-table-text');
-                    if (textEls && textEls.length > 0 && prod.price !== undefined) {
-                        textEls[0].textContent = '₹' + prod.price;
-                    }
-
-                    // Show product image in the thumbnail column
-                    var thumbEl = row.querySelector('.cd-admin-product-thumb');
-                    if (thumbEl && prod.image) {
-                        thumbEl.style.backgroundImage = 'url("' + prod.image + '")';
-                        thumbEl.style.backgroundSize = 'cover';
-                        thumbEl.style.backgroundPosition = 'center';
-                        thumbEl.style.borderRadius = '6px';
-                        thumbEl.style.width = '44px';
-                        thumbEl.style.height = '44px';
-                        thumbEl.style.minWidth = '44px';
-                    }
-
-                    setPillForStatus(row, prod.status || 'Active');
-                }
-            });
-        })();
-
-        function showOverlay() {
-            if (!overlay) return;
-            overlay.style.display = 'flex';
-        }
-
-        function hideOverlay() {
-            if (!overlay) return;
-            overlay.style.display = 'none';
-            activeRow = null;
-        }
-
-        function setPillForStatus(row, statusValue) {
-            // statusValue: "Active" | "Out of Stock"
-            var pill = row.querySelector('.cd-admin-status-pill');
-            if (!pill) return;
-
-            pill.classList.remove('is-active');
-            pill.classList.remove('is-out');
-
-            if (statusValue === 'Active') {
-                pill.classList.add('is-active');
-                pill.textContent = 'Active';
-            } else {
-                pill.classList.add('is-out');
-                pill.textContent = 'Out of Stock';
-            }
-        }
-
         function fillModalFromRow(row) {
             editName.value = row.dataset.productName || '';
             editCategory.value = row.dataset.productMeta || '';
             editPrice.value = row.dataset.productPrice || '';
             editStatus.value = row.dataset.productStatus || 'Active';
-            // Load current image from cache
+            
             editBase64 = '';
             if (editFileLabel) editFileLabel.textContent = 'No file chosen';
             if (editImageFile) editImageFile.value = '';
-            var prod = findProductByRow(row);
-            var currentImage = prod && prod.image ? prod.image : '';
+            
+            var currentImage = row.querySelector('.cd-admin-product-thumb').style.backgroundImage;
+            if (currentImage && currentImage.startsWith('url("')) {
+                currentImage = currentImage.substring(5, currentImage.length - 2);
+            }
             if (editImageUrl) editImageUrl.value = currentImage;
             showEditPreview(currentImage);
         }
@@ -518,63 +307,61 @@
         function updateRowFromModal() {
             if (!activeRow) return;
 
+            var id = activeRow.dataset.productId;
             var name = (editName.value || '').trim();
             var category = (editCategory.value || '').trim();
             var price = (editPrice.value || '').trim();
             var status = editStatus.value || 'Active';
             var image = editBase64 || (editImageUrl ? editImageUrl.value.trim() : '');
 
-            activeRow.dataset.productName = name;
-            activeRow.dataset.productMeta = category;
-            activeRow.dataset.productPrice = price;
-            activeRow.dataset.productStatus = status;
+            // Call server-side action
+            var formData = new FormData();
+            formData.append('id', id);
+            formData.append('category', category);
+            formData.append('price', price);
+            formData.append('status', status);
+            formData.append('imageUrl', image);
 
-            // Name + category
-            var nameEl = activeRow.querySelector('.cd-admin-product-name');
-            if (nameEl) nameEl.textContent = name;
+            fetch('/Admin/EditProduct', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    // Update UI only if server update succeeded
+                    activeRow.dataset.productName = name;
+                    activeRow.dataset.productMeta = category;
+                    activeRow.dataset.productPrice = price;
+                    activeRow.dataset.productStatus = status;
 
-            var metaEl = activeRow.querySelector('.cd-admin-product-meta');
-            if (metaEl) metaEl.textContent = category;
+                    var nameEl = activeRow.querySelector('.cd-admin-product-name');
+                    if (nameEl) nameEl.textContent = name;
 
-            // Price (first .cd-admin-table-text inside the row)
-            var textEls = activeRow.querySelectorAll('.cd-admin-table-text');
-            if (textEls && textEls.length > 0) {
-                textEls[0].textContent = '\u20B9' + price;
-            }
+                    var metaEl = activeRow.querySelector('.cd-admin-product-meta');
+                    if (metaEl) metaEl.textContent = category;
 
-            setPillForStatus(activeRow, status);
+                    var textEls = activeRow.querySelectorAll('.cd-admin-table-text');
+                    if (textEls && textEls.length > 0) {
+                        textEls[0].textContent = '₹' + price;
+                    }
 
-            // Update thumbnail with new image
-            if (image) {
-                var thumbEl = activeRow.querySelector('.cd-admin-product-thumb');
-                if (thumbEl) {
-                    thumbEl.style.backgroundImage = 'url("' + image + '")';
-                    thumbEl.style.backgroundSize = 'cover';
-                    thumbEl.style.backgroundPosition = 'center';
-                    thumbEl.style.borderRadius = '6px';
-                    thumbEl.style.width = '44px';
-                    thumbEl.style.height = '44px';
-                    thumbEl.style.minWidth = '44px';
+                    setPillForStatus(activeRow, status);
+
+                    if (image) {
+                        var thumbEl = activeRow.querySelector('.cd-admin-product-thumb');
+                        if (thumbEl) {
+                            thumbEl.style.backgroundImage = 'url("' + image + '")';
+                        }
+                    }
+                    hideOverlay();
+                } else {
+                    alert('Failed to update product');
                 }
-            }
-
-            // Persist changes in localStorage cache.
-            var prod = findProductByRow(activeRow);
-            if (prod) {
-                prod.name = name;
-                prod.category = category;
-                prod.price = price;
-                prod.status = status;
-                if (image) prod.image = image;
-                prod.deleted = false;
-            }
+            });
         }
 
         if (saveBtn) {
             saveBtn.addEventListener('click', function () {
                 updateRowFromModal();
-                saveProducts(productsCache);
-                hideOverlay();
             });
         }
 
@@ -627,17 +414,24 @@
                 var row = btn.closest('.cd-admin-product-row');
                 if (!row) return;
 
+                var id = row.dataset.productId;
                 var name = row.dataset.productName || 'this product';
                 var ok = confirm('Delete "' + name + '" permanently?');
                 if (!ok) return;
 
-                var prod = findProductByRow(row);
-                if (prod) {
-                    prod.deleted = true;
-                    saveProducts(productsCache);
-                }
+                var formData = new FormData();
+                formData.append('id', id);
 
-                if (row.parentElement) row.parentElement.removeChild(row);
+                fetch('/Admin/DeleteProduct', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        if (row.parentElement) row.parentElement.removeChild(row);
+                    } else {
+                        alert('Failed to delete product');
+                    }
+                });
             });
         });
     })();
