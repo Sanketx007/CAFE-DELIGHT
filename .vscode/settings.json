@@ -1,0 +1,28 @@
+{
+  "mssql.connections": [
+    {
+      "server": "(localdb)\\MSSQLLocalDB",
+      "database": "CafeDelightDB",
+      "authenticationType": "Integrated",
+      "profileName": "Cafe Delight — SQL Server (LocalDB)",
+      "emptyPasswordInput": false,
+      "savePassword": false
+    },
+    {
+      "server": "localhost",
+      "database": "CafeDelightDB",
+      "authenticationType": "Integrated",
+      "profileName": "Cafe Delight — SQL Server (default instance)",
+      "emptyPasswordInput": false,
+      "savePassword": false
+    },
+    {
+      "server": "localhost\\SQLEXPRESS",
+      "database": "CafeDelightDB",
+      "authenticationType": "Integrated",
+      "profileName": "Cafe Delight — SQL Server Express",
+      "emptyPasswordInput": false,
+      "savePassword": false
+    }
+  ]
+}
